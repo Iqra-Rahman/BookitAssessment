@@ -5,11 +5,9 @@ import dotenv from 'dotenv';
 import { db } from './config/db.js';
 import { createExperienceTable } from './models/experience.js';
 import { createBookingTable } from './models/booking.js';
-import { createPromoTable } from './models/promo.js';
 
 import experienceRoutes from './routes/experienceRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
-import promoRoutes from './routes/promoRoutes.js';
 
 dotenv.config();
 
@@ -20,7 +18,6 @@ app.use(bodyParser.json());
 
 app.use('/experiences', experienceRoutes);
 app.use('/bookings', bookingRoutes);
-app.use('/promo', promoRoutes);
 
 const PORT = process.env.PORT || 5000;
 
@@ -29,7 +26,7 @@ const init = async () => {
   await createBookingTable(db);
   await createPromoTable(db);
 
-  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 };
 
 init();

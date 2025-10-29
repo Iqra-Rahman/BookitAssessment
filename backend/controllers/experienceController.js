@@ -2,7 +2,8 @@ import { db } from "../config/db.js";
 
 export const getExperiences = async (req, res) => {
   try {
-    const search = req.query.search || ""; // get ?search= from frontend
+    // search query parameter
+    const search = req.query.search || ""; 
 
     let query = "SELECT * FROM experiences";
     const values = [];

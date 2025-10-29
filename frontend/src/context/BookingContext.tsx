@@ -1,22 +1,29 @@
-import { createContext, useContext, useState} from 'react';
-import type{ Experience } from '../types/types';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
+
+interface BookingData {
+  experience_id: number;
+  title: string;
+  booking_date: string;
+  booking_time: string;
+  guests: number;
+  subtotal: number;
+  tax: number;
+  total: number;
+}
 
 interface BookingContextType {
-  selectedExperience: Experience | null;
-  setSelectedExperience: (exp: Experience | null) => void;
-  bookingData: any;
-  setBookingData: (data: any) => void;
+  bookingData: BookingData | null;
+  setBookingData: (data: BookingData) => void;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
 export const BookingProvider = ({ children }: { children: ReactNode }) => {
-  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
-  const [bookingData, setBookingData] = useState<any>({});
+  const [bookingData, setBookingData] = useState<BookingData | null>(null);
 
   return (
-    <BookingContext.Provider value={{ selectedExperience, setSelectedExperience, bookingData, setBookingData }}>
+    <BookingContext.Provider value={{ bookingData, setBookingData }}>
       {children}
     </BookingContext.Provider>
   );
@@ -24,6 +31,6 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
 
 export const useBooking = () => {
   const context = useContext(BookingContext);
-  if (!context) throw new Error('useBooking must be used inside BookingProvider');
+  if (!context) throw new Error("useBooking must be used within BookingProvider");
   return context;
 };

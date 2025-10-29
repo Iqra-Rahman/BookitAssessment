@@ -1,15 +1,13 @@
 import axios from 'axios';
 
-// Base API instance
 const API = axios.create({
   baseURL: 'http://localhost:5000',
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: false, // set to true only if backend uses cookies/sessions
+  withCredentials: false,
 });
 
-// Response Interceptor for cleaner error handling
 API.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -18,15 +16,22 @@ API.interceptors.response.use(
   }
 );
 
-// ✅ Experiences
 export const getExperiences = (searchQuery = "") =>
   API.get('/experiences', { params: { search: searchQuery } });
+
 export const getExperienceById = (id: number) => API.get(`/experiences/${id}`);
 
-// ✅ Booking
-export const createBooking = (data: any) => API.post('/bookings', data);
+export const getAvailability = async (experienceId: number, days: number = 7) => {
+  try {
+    const { data } = await API.get(`/bookings/availability/${experienceId}/${days}`);
+    console.log("Availability data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching availability:", error);
+    return { dates: [] };
+  }
+};
 
-// ✅ Promo Validation
-export const validatePromo = (code: string) => API.post('/promo/validate', { code });
+export const createBooking = (data: any) => API.post('/bookings', data);
 
 export default API;

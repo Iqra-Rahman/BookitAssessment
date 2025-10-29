@@ -6,7 +6,7 @@ export default function Loader({ size = 10, text }: { size?: number; text?: stri
     <div className="flex flex-col items-center justify-center py-8">
       <div
         style={{ width: s, height: s }}
-        className="rounded-full border-4 border-t-4 border-gray-200 border-t-blue-600 animate-spin"
+        className="rounded-full border-4 border-t-4 border-gray-200 border-t-yellow-600 animate-spin"
         role="status"
         aria-label="Loading"
       />

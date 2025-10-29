@@ -7,6 +7,8 @@ import { BookingProvider } from "./context/BookingContext";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import Details from "./pages/Details";
+import Checkout from "./pages/Checkout";
+import BookingConfirmation from "./pages/BookingConfirmation";
 
 export default function App() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -24,13 +26,15 @@ export default function App() {
   return (
     <BookingProvider>
       <Router>
-        {/* ✅ Global Header stays visible on every route */}
+        {/* Header */}
         <Header onSearch={fetchData} />
 
-        {/* ✅ Page Routing */}
+        {/* Page Routing */}
         <Routes>
           <Route path="/" element={<Home experiences={experiences} />} />
           <Route path="/details/:id" element={<Details />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/booking-confirmation" element={<BookingConfirmation />} />
         </Routes>
       </Router>
     </BookingProvider>

@@ -12,10 +12,10 @@ export interface Booking {
   experience_id: number;
   user_name: string;
   email: string;
-  slot_time: string;
+  booking_date: string; 
+  booking_time: string;
+  guests: number;
+  price_charged?: number;
 }
 
-export interface PromoResponse {
-  valid: boolean;
-  discount: number;
-}
+
