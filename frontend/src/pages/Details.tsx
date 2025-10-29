@@ -26,7 +26,7 @@ export default function Details() {
         const expRes = await getExperienceById(Number(id));
         setExperience(expRes.data);
 
-        const availRes = await getAvailability(Number(id), 10);
+        const availRes = await getAvailability(Number(id), 5);
         console.log("Availability data:", availRes);
         const fetchedDates = availRes.dates || availRes.data?.dates || [];
         setAvailability(fetchedDates);
@@ -102,11 +102,10 @@ export default function Details() {
                     setSelectedDate(d.date);
                     setSelectedTime("");
                   }}
-                  className={`px-4 py-2 rounded-md text-sm border ${
-                    selectedDate === d.date
+                  className={`px-4 py-2 rounded-md text-sm border ${selectedDate === d.date
                       ? "bg-yellow-400 border-yellow-500 text-black"
                       : "border-gray-200 text-gray-700"
-                  }`}
+                    }`}
                 >
                   {new Date(d.date).toDateString().slice(4, 10)}
                 </button>
@@ -126,13 +125,12 @@ export default function Details() {
                   key={s.time}
                   onClick={() => setSelectedTime(s.time)}
                   disabled={s.remaining === 0}
-                  className={`px-3 py-2 rounded-md text-sm border ${
-                    selectedTime === s.time
+                  className={`px-3 py-2 rounded-md text-sm border ${selectedTime === s.time
                       ? "bg-yellow-400 border-yellow-500 text-black"
                       : "border-gray-200 text-gray-700"
-                  } ${s.remaining === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+                    } ${s.remaining === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
-                  {s.time} {s.remaining === 0 ? " (Sold out)" : ` (${s.remaining} left)`}
+                  {s.remaining === 0 ? `${s.time} (Sold out)` : s.time}
                 </button>
               ))}
             </div>
@@ -188,11 +186,10 @@ export default function Details() {
           <button
             onClick={handleBook}
             disabled={!selectedDate || !selectedTime}
-            className={`mt-6 w-full py-3 rounded-md font-semibold ${
-              !selectedDate || !selectedTime
+            className={`mt-6 w-full py-3 rounded-md font-semibold ${!selectedDate || !selectedTime
                 ? "bg-gray-300 cursor-not-allowed"
                 : "bg-yellow-400 hover:bg-yellow-500"
-            }`}
+              }`}
           >
             Confirm
           </button>

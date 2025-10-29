@@ -1,40 +1,48 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+interface HeaderProps {
+  onSearch: (query: string) => void;
+}
 
 export default function Header({
   onSearch,
-}: {
-  onSearch?: (query: string) => void;
-}) {
-  const [query, setQuery] = useState("");
+}:
+  HeaderProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
-  const handleSearch = () => {
-    if (onSearch) onSearch(query);
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      await onSearch(searchQuery);
+      navigate("/search-results"); // redirect to search results page
+    }
   };
 
   return (
-    <header className="bg-white flex justify-between items-center px-8 py-4 shadow-sm sticky top-0 w-full z-10">
-      {/* Left Logo */}
-      <div className="flex items-center gap-2">
-        {/* <img src="/logo.png" alt="logo" className="h-10 w-10" /> */}
-        <h1 className="font-semibold text-lg text-gray-800">highway delite</h1>
-      </div>
+    <header className="flex justify-between items-center px-8 py-4 bg-white shadow-md">
+      <img
+        src="/hDeliteLogo.png"
+        alt="Highway Delite Logo"
+        className="h-11 w-auto pl-10 object-contain cursor-pointer"
+      />
 
-      {/* Search Box */}
-      <div className="flex items-center gap-2 w-1/3">
+      <form onSubmit={handleSearch} className="flex gap-x-1.5 pr-10">
         <input
           type="text"
-          placeholder="Search experiences"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="grow bg-gray-100 rounded-md px-4 py-2 outline-none focus:ring-2 focus:ring-yellow-400"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search experiences..."
+          className=" bg-[#EDEDED] rounded-md px-4 py-2 w-64 focus:outline-none"
         />
         <button
-          onClick={handleSearch}
-          className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-4 py-2 rounded-md shadow "
+          type="submit"
+          className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 rounded-md"
         >
           Search
         </button>
-      </div>
+      </form>
     </header>
   );
 }

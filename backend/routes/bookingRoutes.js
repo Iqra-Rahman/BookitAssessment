@@ -15,6 +15,7 @@ router.get("/availability/:experienceId/:days", async (req, res) => {
       "09:00 AM",
       "11:00 AM",
       "01:00 PM",
+      "03:00 PM",
     ];
 
     const totalSeats = 5;
@@ -46,7 +47,9 @@ router.get("/availability/:experienceId/:days", async (req, res) => {
       dates.push({ date: dateStr, slots });
     }
 
-    console.log("Availability fetched:", dates.length, "days");
+    // console.log("Availability fetched:", dates.length, "days");
+    console.log("Availability sample:", JSON.stringify(dates[0], null, 2));
+
     res.json({ dates });
   } catch (err) {
     console.error("Error fetching availability:", err);

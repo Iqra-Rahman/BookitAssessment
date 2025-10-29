@@ -24,7 +24,6 @@ const PORT = process.env.PORT || 5000;
 const init = async () => {
   await createExperienceTable(db);
   await createBookingTable(db);
-  await createPromoTable(db);
 
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 };
