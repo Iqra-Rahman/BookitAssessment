@@ -1,23 +1,18 @@
-import { db } from '../config/db.js';
-
-// export const getExperiences = async (req, res) => {
-//   const [rows] = await db.query('SELECT * FROM experiences');
-//   res.json(rows);
-// };
-
-
-// export const getExperienceById = async (req, res) => {
-//   const { id } = req.params;
-//   const [rows] = await db.query('SELECT * FROM experiences WHERE id = ?', [id]);
-//   if (rows.length === 0) return res.status(404).json({ message: 'Not found' });
-//   res.json(rows[0]);
-// };
-
 import { db } from "../config/db.js";
 
 export const getExperiences = async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM experiences");
+    const search = req.query.search || ""; // get ?search= from frontend
+
+    let query = "SELECT * FROM experiences";
+    const values = [];
+
+    if (search) {
+      query += " WHERE title LIKE ? OR location LIKE ?";
+      values.push(`%${search}%`, `%${search}%`);
+    }
+
+    const [rows] = await db.query(query, values);
     res.json(rows);
   } catch (err) {
     console.error("Error fetching experiences:", err);

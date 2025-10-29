@@ -1,34 +1,10 @@
-// import type{ Experience } from '../types/types.ts';
-
-// const ExperienceCard = ({
-//   experience,
-//   onSelect,
-// }: {
-//   experience: Experience;
-//   onSelect: () => void;
-// }) => (
-//   <div className="p-4 border rounded-lg shadow hover:shadow-lg transition">
-//     <h3 className="text-lg font-bold">{experience.title}</h3>
-//     <p className="text-sm text-gray-600 mb-2">{experience.description}</p>
-//     <p className="font-semibold">₹{experience.price}</p>
-//     <button
-//       onClick={onSelect}
-//       className="mt-3 bg-blue-600 text-white px-3 py-1 rounded"
-//     >
-//       View Details
-//     </button>
-//   </div>
-// );
-
-// export default ExperienceCard;
-
-
-// src/components/ExperienceCard.tsx
+import {Link} from 'react-router-dom';
 import type { Experience } from "../types/types";
 
 export default function ExperienceCard({ experience }: { experience: Experience }) {
   return (
-    <div className="bg-white border rounded-lg shadow-sm hover:shadow-lg transition duration-300 overflow-hidden">
+    <Link to={`/details/${experience.id}`}>
+    <div className="bg-[#F0F0F0] rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
       <div className="relative">
         <img
           src={experience.image_url}
@@ -41,6 +17,7 @@ export default function ExperienceCard({ experience }: { experience: Experience 
           </span>
         )}
       </div>
+
       <div className="p-4 flex flex-col justify-between h-40">
         <div>
           <h3 className="font-semibold text-lg text-gray-800">{experience.title}</h3>
@@ -56,5 +33,6 @@ export default function ExperienceCard({ experience }: { experience: Experience 
         </div>
       </div>
     </div>
+    </Link>
   );
 }

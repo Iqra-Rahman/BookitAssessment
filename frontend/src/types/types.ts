@@ -3,8 +3,9 @@ export interface Experience {
   title: string;
   description: string;
   price: number;
-  location?: string;
+  available_slots: number;
   image_url: string;
+  location: string;
 }
 
 export interface Booking {

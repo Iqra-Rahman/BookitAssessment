@@ -14,7 +14,8 @@ import promoRoutes from './routes/promoRoutes.js';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(bodyParser.json());
 
 app.use('/experiences', experienceRoutes);
@@ -28,7 +29,7 @@ const init = async () => {
   await createBookingTable(db);
   await createPromoTable(db);
 
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 };
 
 init();

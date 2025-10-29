@@ -5,7 +5,9 @@ export const createExperienceTable = async (db) => {
       title VARCHAR(100),
       description TEXT,
       price DECIMAL(10,2),
-      available_slots INT
+      available_slots INT,
+      image_url VARCHAR(255),
+      location VARCHAR(100)
     )
   `);
 };

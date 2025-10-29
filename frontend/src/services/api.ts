@@ -1,9 +1,32 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000';
+// Base API instance
+const API = axios.create({
+  baseURL: 'http://localhost:5000',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: false, // set to true only if backend uses cookies/sessions
+});
 
-export const getExperiences = () => axios.get(`${API_URL}/experiences`);
-export const getExperienceById = (id: number) => axios.get(`${API_URL}/experiences/${id}`);
-export const createBooking = (data: any) => axios.post(`${API_URL}/bookings`, data);
-export const validatePromo = (code: string) =>
-  axios.post(`${API_URL}/promo/validate`, { code });
+// Response Interceptor for cleaner error handling
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
+// ✅ Experiences
+export const getExperiences = (searchQuery = "") =>
+  API.get('/experiences', { params: { search: searchQuery } });
+export const getExperienceById = (id: number) => API.get(`/experiences/${id}`);
+
+// ✅ Booking
+export const createBooking = (data: any) => API.post('/bookings', data);
+
+// ✅ Promo Validation
+export const validatePromo = (code: string) => API.post('/promo/validate', { code });
+
+export default API;
