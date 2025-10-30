@@ -16,7 +16,7 @@ export default function Details() {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [guests, setGuests] = useState<number>(1);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  // const [submitting, setSubmitting] = useState(false);
 
   // Fetch experience and availability
   useEffect(() => {
