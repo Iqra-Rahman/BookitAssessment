@@ -43,7 +43,7 @@ export default function Checkout() {
 
     try {
       setSubmitting(true);
-      await axios.post("http://localhost:5000/bookings", {
+      await axios.post("https://bookit-assessment.vercel.app/bookings", {
         experience_id: experience.id,
         user_name: fullName,
         email,
