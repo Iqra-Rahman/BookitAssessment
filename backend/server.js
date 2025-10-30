@@ -1,37 +1,64 @@
-import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
-import { db } from "./config/db.js";
-import { createExperienceTable } from "./models/experience.js";
-import { createBookingTable } from "./models/booking.js";
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+import { db } from './config/db.js';
+import { createExperienceTable } from './models/experience.js';
+import { createBookingTable } from './models/booking.js';
 
-import experienceRoutes from "./routes/experienceRoutes.js";
-import bookingRoutes from "./routes/bookingRoutes.js";
+import experienceRoutes from './routes/experienceRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL || '*', credentials: true }));
+
 app.use(bodyParser.json());
 
 // Routes
-app.use("/experiences", experienceRoutes);
-app.use("/bookings", bookingRoutes);
+app.use('/experiences', experienceRoutes);
+app.use('/bookings', bookingRoutes);
 
-// itnialize tables
+
+app.get('/', (req, res) => {
+  res.send('Server is running successfully on Railway!');
+});
+
+const PORT = process.env.PORT || 5000;
+
 const init = async () => {
   try {
     await createExperienceTable(db);
     await createBookingTable(db);
-    console.log("Tables initialized successfully");
-  } catch (error) {
-    console.error(" Error initializing tables:", error);
+
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Server failed to start:', err);
   }
 };
 
 init();
 
-export default app;
+
+
+
+
+
+
+// app.use(bodyParser.json());
+
+// app.use('/experiences', experienceRoutes);
+// app.use('/bookings', bookingRoutes);
+
+// const PORT = process.env.PORT || 5000;
+
+// const init = async () => {
+//   await createExperienceTable(db);
+//   await createBookingTable(db);
+
+//   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// };
