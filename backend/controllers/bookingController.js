@@ -1,76 +1,74 @@
-import { db } from '../config/db.js';
+import { db } from "../config/db.js";
 
-// new booking
-export const createBooking = async (req, res) => {
+// Get availability
+export const getAvailability = async (req, res) => {
   try {
-    const { experience_id, user_name, user_email, booking_date, total_price } = req.body;
+    const { experienceId, days } = req.params;
+    const numDays = parseInt(days) || 7;
 
-    if (!experience_id || !user_name || !user_email || !booking_date || !total_price) {
-      return res.status(400).json({ message: 'All fields are required' });
+    const allSlots = [
+      "07:00 AM",
+      "09:00 AM",
+      "11:00 AM",
+      "01:00 PM",
+      "03:00 PM",
+    ];
+
+    const totalSeats = 5;
+
+    const [booked] = await db.query(
+      "SELECT booking_date, slot_time, COUNT(*) as bookedCount FROM bookings WHERE experience_id = ? GROUP BY booking_date, slot_time",
+      [experienceId]
+    );
+
+    const bookedMap = {};
+    booked.forEach((b) => {
+      const key = `${b.booking_date}_${b.slot_time}`;
+      bookedMap[key] = b.bookedCount;
+    });
+
+    const dates = [];
+    for (let i = 0; i < numDays; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      const dateStr = d.toISOString().split("T")[0];
+
+      const slots = allSlots.map((slot) => {
+        const key = `${dateStr}_${slot}`;
+        const bookedCount = bookedMap[key] || 0;
+        const remaining = Math.max(0, totalSeats - bookedCount);
+        return { time: slot, remaining };
+      });
+
+      dates.push({ date: dateStr, slots });
     }
 
-    const sql = `
-      INSERT INTO bookings (experience_id, user_name, user_email, booking_date, total_price)
-      VALUES (?, ?, ?, ?, ?)
-    `;
-
-    db.query(sql, [experience_id, user_name, user_email, booking_date, total_price], (err, result) => {
-      if (err) {
-        console.error('Error inserting booking:', err);
-        return res.status(500).json({ message: 'Database error while creating booking' });
-      }
-
-      res.status(201).json({
-        message: 'Booking created successfully!',
-        bookingId: result.insertId,
-      });
-    });
-  } catch (error) {
-    console.error('Error in createBooking:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.log("Availability generated for", experienceId);
+    res.status(200).json({ dates });
+  } catch (err) {
+    console.error("Error fetching availability:", err);
+    res.status(500).json({ message: "Error fetching availability" });
   }
 };
 
-// available dates 
-export const getAvailability = async (req, res) => {
+// Create booking
+export const createBooking = async (req, res) => {
   try {
-    const { id } = req.params; // experience id
-    const { days } = req.query;
+    const { experience_id, user_name, email, booking_date, booking_time } = req.body;
 
-    if (!id || !days) {
-      return res.status(400).json({ message: 'Experience ID and days are required' });
+    if (!experience_id || !user_name || !email || !booking_date || !booking_time) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const sql = `SELECT booking_date FROM bookings WHERE experience_id = ?`;
+    await db.query(
+      "INSERT INTO bookings (experience_id, user_name, email, booking_date, slot_time) VALUES (?, ?, ?, ?, ?)",
+      [experience_id, user_name, email, booking_date, booking_time]
+    );
 
-    db.query(sql, [id], (err, results) => {
-      if (err) {
-        console.error('Error fetching availability:', err);
-        return res.status(500).json({ message: 'Database error while fetching availability' });
-      }
-
-      const bookedDates = new Set(results.map(r => r.booking_date.toISOString().split('T')[0]));
-
-      const today = new Date();
-      const dates = [];
-
-      for (let i = 0; i < Number(days); i++) {
-        const nextDate = new Date(today);
-        nextDate.setDate(today.getDate() + i);
-        const dateStr = nextDate.toISOString().split('T')[0];
-
-        const slots = [
-          { time: '10:00 AM', remaining: bookedDates.has(dateStr) ? 0 : 5 },
-          { time: '2:00 PM', remaining: bookedDates.has(dateStr) ? 0 : 5 },
-        ];
-
-        dates.push({ date: dateStr, slots });
-      }
-
-      res.status(200).json({ dates });
-    });
-  } catch (error) {
-    console.error('Error in getAvailability:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.log("Booking created for:", booking_date, booking_time);
+    res.status(201).json({ message: "Booking created successfully" });
+  } catch (err) {
+    console.error("Error creating booking:", err);
+    res.status(500).json({ message: "Booking failed" });
   }
 };
