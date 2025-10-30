@@ -35,41 +35,39 @@ export const createBooking = async (req, res) => {
 export const getAvailability = async (req, res) => {
   try {
     const { id } = req.params; // experience id
-    const { days } = req.query; 
+    const { days } = req.query;
 
     if (!id || !days) {
       return res.status(400).json({ message: 'Experience ID and days are required' });
     }
 
-    // booked dates 
-    const sql = `
-      SELECT booking_date FROM bookings WHERE experience_id = ?
-    `;
+    const sql = `SELECT booking_date FROM bookings WHERE experience_id = ?`;
 
     db.query(sql, [id], (err, results) => {
       if (err) {
-        console.error(' Error fetching availability:', err);
+        console.error('Error fetching availability:', err);
         return res.status(500).json({ message: 'Database error while fetching availability' });
       }
+
       const bookedDates = new Set(results.map(r => r.booking_date.toISOString().split('T')[0]));
 
       const today = new Date();
-      const availableDates = [];
+      const dates = [];
 
       for (let i = 0; i < Number(days); i++) {
         const nextDate = new Date(today);
         nextDate.setDate(today.getDate() + i);
         const dateStr = nextDate.toISOString().split('T')[0];
 
-        if (!bookedDates.has(dateStr)) {
-          availableDates.push(dateStr);
-        }
+        const slots = [
+          { time: '10:00 AM', remaining: bookedDates.has(dateStr) ? 0 : 5 },
+          { time: '2:00 PM', remaining: bookedDates.has(dateStr) ? 0 : 5 },
+        ];
+
+        dates.push({ date: dateStr, slots });
       }
 
-      res.status(200).json({
-        message: 'Availability fetched successfully!',
-        availableDates,
-      });
+      res.status(200).json({ dates });
     });
   } catch (error) {
     console.error('Error in getAvailability:', error);
